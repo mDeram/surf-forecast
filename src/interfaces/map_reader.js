@@ -1,6 +1,9 @@
 const fs = require('fs');
 const getJSON = require('get-json');
 
+const Cache = require('./cache.js');
+let cache;
+
 function formatLink(id, name) {
     const spaceRule = / +/g;
     let formatedName = name.split(spaceRule).join('-'); 
@@ -12,6 +15,7 @@ function formatLink(id, name) {
 class DatabaseMap {
     constructor() {
         this.db = [];
+        cache = new Cache(this.fetchData.bind(this), 3600);
     }
     loadMapData() {
         fs.readFile('./src/map.json', 'utf8', (err, data) => {
@@ -48,7 +52,7 @@ class DatabaseMap {
             return res;
         });
     }
-    getData(id) {
+    fetchData(id) {
         const subquery = `?spotId=${id}&days=1`;
         const results = [
             this.getResults('wave'+subquery),
@@ -57,6 +61,9 @@ class DatabaseMap {
             this.getResults('weather'+subquery)
         ]
         return Promise.all(results); 
+    }
+    getData(id) {
+        return cache.retrieve(id);
     }
 }
 

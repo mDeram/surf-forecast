@@ -13,6 +13,7 @@ publicIp.v4().then(value => {
     redirectIp = 'http://'.concat(redirectIp);
 });
 
+app.use(express.static('src/img'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -21,14 +22,6 @@ const databaseMap = new DatabaseMap();
 databaseMap.loadMapData();
 
 const forecastFormat = require('./interfaces/forecast.js');
-
-const Cache = require('./interfaces/cache.js');
-function retriever(id) {
-    let ha = databaseMap.getData(id);
-    console.log(ha);
-    return ha;
-}
-const cache = new Cache(retriever, 3600);
 
 app.get('/', (req, res) => {
     res.render('previsions', {
@@ -41,7 +34,7 @@ app.get('/', (req, res) => {
 app.get('/api', (req, res) => {
     const id = req.query.id;
     if (id != undefined) {
-        cache.retrieve(id).then(result => {
+        databaseMap.getData(id).then(result => {
             res.json(forecastFormat(result));
         });
     }

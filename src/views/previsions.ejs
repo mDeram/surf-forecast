@@ -19,6 +19,9 @@ body {
     background-size: cover;
     background-attachment: fixed;
 }
+#windArrow {
+    display: none;
+}
     </style>
 
     <body class="bg-dark">
@@ -79,9 +82,10 @@ body {
                         </div>
                     </form>
                     <div id="data">
-                        <div id="wind">
-                            <canvas id="myChart" width="400" height="100"></canvas>
-                        </div>
+                        <canvas id="wind" width="400" height="100"></canvas>
+                        <canvas id="tide" width="400" height="100"></canvas>
+                        <canvas id="weather" width="400" height="100"></canvas>
+                        <img id="windArrow" src="/arrow.png"/>
                     </div>
                 </div>
                 <br>         
