@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 4000;
 const path = require('path');
 const fs = require('fs');
 
@@ -22,6 +22,8 @@ const databaseMap = new DatabaseMap();
 databaseMap.loadMapData();
 
 const forecastFormat = require('./interfaces/forecast.js');
+let pageGet = 0;
+let apiGet = 0;
 
 app.get('/', (req, res) => {
     res.render('previsions', {
@@ -29,6 +31,8 @@ app.get('/', (req, res) => {
         port: port,
         spots: databaseMap.db
     });
+    pageGet++;
+    console.log('page: ' + pageGet);
 });
 
 app.get('/api', (req, res) => {
@@ -38,6 +42,8 @@ app.get('/api', (req, res) => {
             res.json(forecastFormat(result));
         });
     }
+    apiGet++;
+    console.log('api: ' + apiGet);
 });
 
 app.listen(port, () => {

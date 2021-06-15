@@ -19,6 +19,10 @@ body {
     background-size: cover;
     background-attachment: fixed;
 }
+#dropdown-list {
+    overflow-y: scroll;
+    max-height: 300px;
+}
 #windArrow {
     display: none;
 }
@@ -91,6 +95,8 @@ body {
                 <br>         
             </div>
         </div>
-        <%- include('./script.ejs', {ip: ip, port: port, spots: spots}); %>
+        <script>
+            <%- include('./script.js', {ip: ip, port: port, spots: spots}); %>
+        </script>
     </body>
 </html>

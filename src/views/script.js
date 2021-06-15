@@ -1,9 +1,5 @@
-<script>
 let redirectIp = '<%- ip %>:<%- port %>';
 let spots = <%- JSON.stringify(spots) %>;
-spots.forEach(spot => {
-    spot.lowName = spot.name.toLowerCase()
-});
 
 function filterSpots(searchString) {
     searchString = searchString.toLowerCase();
@@ -11,9 +7,6 @@ function filterSpots(searchString) {
     for (let spot of spots) {
         if (searchString == '' || spot.lowName.includes(searchString)) {
             results.push(spot.name);
-            if (results.length >= 10) {
-                break;
-            }
         }
     }
     return results;
@@ -212,4 +205,3 @@ const tideChart = new Chart(tideCtx, {
         }]
     }
 });
-</script>

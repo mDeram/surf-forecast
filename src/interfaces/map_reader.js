@@ -37,9 +37,11 @@ class DatabaseMap {
                     id: item.spot,
                     coords: item.location.coordinates,
                     name: item.name,
+                    lowName: item.name.toLowerCase(),
                     link: formatLink(item.spot, item.name)
                 });
             });
+            this.db.sort((a, b) => a.lowName > b.lowName ? 1 : -1 );
         });
     } 
     getResults(query) {
