@@ -5,14 +5,13 @@ const port = 4000;
 const path = require('path');
 const fs = require('fs');
 const homepage = process.env.HOMEPAGE || '';
+const domain = process.env.DOMAIN || 'localhost';
 
-const publicIp = require('public-ip');
-let url = `http://localhost:${port}/${homepage}`;
-if (!process.env.NODE_DEV) {
-    publicIp.v4().then(ip => {
-        url = `http://${ip}/${homepage}`;
-    });
-}
+let url;
+if (domain == 'localhost')
+    url = `http://${domain}:${port}/${homepage}`;
+else
+    url = `http://${domain}/${homepage}`;
 
 app.use(express.static('src/img'));
 app.set('views', path.join(__dirname, 'views'));
