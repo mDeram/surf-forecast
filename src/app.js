@@ -1,17 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const port = 4000;
 const path = require('path');
 const fs = require('fs');
+const homepage = process.env.HOMEPAGE || '';
 
 const publicIp = require('public-ip');
-let redirectIp = 'localhost';
-publicIp.v4().then(value => {
-    if (value != '78.114.95.54') {
-        redirectIp = value;
-    }
-    redirectIp = 'http://'.concat(redirectIp);
-});
+let url = `http://localhost:${port}/${homepage}`;
+if (!process.env.NODE_DEV) {
+    publicIp.v4().then(ip => {
+        url = `http://${ip}/${homepage}`;
+    });
+}
 
 app.use(express.static('src/img'));
 app.set('views', path.join(__dirname, 'views'));
@@ -25,17 +26,17 @@ const forecastFormat = require('./interfaces/forecast.js');
 let pageGet = 0;
 let apiGet = 0;
 
-app.get('/', (req, res) => {
+app.get('/' + homepage, (req, res) => {
     res.render('previsions', {
-        ip: redirectIp,
-        port: port,
+        url,
+        apiUrl: url + '/api',
         spots: databaseMap.db
     });
     pageGet++;
     console.log('page: ' + pageGet);
 });
 
-app.get('/api', (req, res) => {
+app.get('/' + homepage + '/api', (req, res) => {
     const id = req.query.id;
     if (id != undefined) {
         databaseMap.getData(id).then(result => {

@@ -1,5 +1,5 @@
-let redirectIp = '<%- ip %>:<%- port %>';
 let spots = <%- JSON.stringify(spots) %>;
+let fetchRetryTimeout = null;
 
 function filterSpots(searchString) {
     searchString = searchString.toLowerCase();
@@ -29,16 +29,20 @@ function updateSpots(spots) {
         list += `<button class="dropdown-item" onclick="return select('${spot}')">${spot}</button>`;
     });
     dropDown.innerHTML = list;
-    return false
 }
 
 function fetchPrevisions(spot) {
-    fetch(redirectIp+'/api?id='+spot.id)
+    if (fetchRetryTimeout) {
+        clearTimeout(fetchRetryTimeout);
+        fetchRetryTimeout = null;
+    }
+
+    fetch('<%- apiUrl %>?id=' + spot.id)
         .then(res => {
             res.json().then(res => displayPrevisions(spot, res));
         }, err => {
-            displayFetchError();
-            setTimeout(() => {
+            displayFetchError(err);
+            fetchRetryTimeout = setTimeout(() => {
                 fetchPrevisions(spot);
             }, 5000);
         });
@@ -68,8 +72,8 @@ const windCtx = document.getElementById('wind').getContext('2d');
 const tideCtx = document.getElementById('tide').getContext('2d');
 const windArrow = document.getElementById('windArrow');
 
-function displayFetchError() {
-    console.log('error');
+function displayFetchError(err) {
+    console.log('Error while loading weather data: ' + err);
 }
 
 function displayPrevisions(spot, previsions) {
