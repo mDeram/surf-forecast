@@ -13,7 +13,7 @@ if (domain == 'localhost')
 else
     url = `http://${domain}/${homepage}`;
 
-app.use(express.static('src/img'));
+app.use('/' + homepage, express.static('src/img'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
