@@ -5,13 +5,9 @@ const port = 4000;
 const path = require('path');
 const fs = require('fs');
 const homepage = process.env.HOMEPAGE || '';
-const domain = process.env.DOMAIN || 'localhost';
-
-let url;
-if (domain == 'localhost')
-    url = `http://${domain}:${port}/${homepage}`;
-else
-    url = `http://${domain}/${homepage}`;
+const domain = process.env.DOMAIN || `http://localhost:${port}`;
+const url = `${domain}/${homepage}`;
+const apiUrl = url + '/api';
 
 app.use('/' + homepage, express.static('src/img'));
 app.set('views', path.join(__dirname, 'views'));
@@ -28,7 +24,7 @@ let apiGet = 0;
 app.get('/' + homepage, (req, res) => {
     res.render('previsions', {
         url,
-        apiUrl: url + '/api',
+        apiUrl,
         spots: databaseMap.db
     });
     pageGet++;
