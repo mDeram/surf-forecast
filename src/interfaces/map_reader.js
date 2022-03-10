@@ -1,12 +1,12 @@
 const fs = require('fs');
-const getJSON = require('get-json');
+const phin = require('phin');
 
 const Cache = require('./cache.js');
 let cache;
 
 function formatLink(id, name) {
     const spaceRule = / +/g;
-    let formatedName = name.split(spaceRule).join('-'); 
+    let formatedName = name.split(spaceRule).join('-');
     const dashRule = /-+/g;
     formatedName = formatedName.split(dashRule).join('-');
     return `https://www.surfline.com/surf-report/${formatedName}/${id}`;
@@ -43,26 +43,23 @@ class DatabaseMap {
             });
             this.db.sort((a, b) => a.lowName > b.lowName ? 1 : -1 );
         });
-    } 
+    }
     getResults(query) {
-        return getJSON(`https://services.surfline.com/kbyg/spots/forecasts/${query}`, (err, res) => {
-            if (typeof(err) == String) {
-                console.log(err);
-                return -1;
-            }
-
-            return res;
+        return phin({
+            url: `https://services.surfline.com/kbyg/spots/forecasts/${query}`,
+            parse: "json"
         });
     }
-    fetchData(id) {
+    async fetchData(id) {
         const subquery = `?spotId=${id}&days=1`;
-        const results = [
+        const requests = [
             this.getResults('wave'+subquery),
             this.getResults('wind'+subquery),
             this.getResults('tides'+subquery),
             this.getResults('weather'+subquery)
         ]
-        return Promise.all(results); 
+        const results = await Promise.all(requests).catch(console.error);
+        return results.map(result => result.body);
     }
     getData(id) {
         return cache.retrieve(id);

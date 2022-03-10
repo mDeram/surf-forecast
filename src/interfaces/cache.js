@@ -12,7 +12,7 @@ class CacheItem {
 
 class Cache {
     constructor(retriever, validityDuration) {
-        this.store = {}; 
+        this.store = {};
         this.retriever = retriever;
         this.validityDuration = validityDuration * 1000;
     }
@@ -33,12 +33,10 @@ class Cache {
     async retrieve(param) {
         let item;
         if (this.isStored(param)) {
-            // TODO
-            item = this.store[param];
-
-            if (!this.isTimestampValid(item)) {
+            if (!this.isTimestampValid(this.store[param])) {
                 await this.updateStore(item, param);
             }
+            item = this.store[param];
         } else {
             item = await this.addStore(param);
         }
