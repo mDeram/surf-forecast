@@ -1,12 +1,3 @@
 #!/bin/sh
 
-# Run npm only if package.json changed
-old_sum=$(cat Deploy.cache)
-new_sum=$(md5sum package-lock.json)
-if [ "$old_sum" != "$new_sum" ]; then
-    npm ci --production
-    echo -n "$new_sum" > Deploy.cache
-fi
-
-# Reload the server
-pm2 reload surf-forecast
+pnpm i --frozen-lockfile && pm2 reload surf-forecast && echo "Depolyed" || echo "Error"
